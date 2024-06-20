@@ -1,0 +1,8 @@
+-- 코드를 입력하세요
+SET @HOUR_IT := -1; 
+SELECT @HOUR_IT := @HOUR_IT+1 AS 'HOUR', 
+    (SELECT COUNT(*) 
+        FROM ANIMAL_OUTS 
+        WHERE HOUR(DATETIME) = @HOUR_IT) AS 'COUNT' 
+    FROM ANIMAL_OUTS 
+    WHERE @HOUR_IT < 23;
