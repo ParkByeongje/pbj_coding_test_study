@@ -1,0 +1,32 @@
+-- 코드를 입력하세요
+WITH AvailableCars AS (
+    SELECT
+        c.CAR_ID,
+        c.CAR_TYPE,
+        c.DAILY_FEE,
+        IFNULL(d.DISCOUNT_RATE, 0) AS DISCOUNT_RATE
+    FROM
+        CAR_RENTAL_COMPANY_CAR c
+    LEFT JOIN
+        CAR_RENTAL_COMPANY_RENTAL_HISTORY h ON c.CAR_ID = h.CAR_ID AND (
+            (h.START_DATE <= '2022-11-30' AND h.END_DATE >= '2022-11-01')
+        )
+    LEFT JOIN
+        CAR_RENTAL_COMPANY_DISCOUNT_PLAN d ON c.CAR_TYPE = d.CAR_TYPE AND d.DURATION_TYPE = '30일 이상'
+    WHERE
+        c.CAR_TYPE IN ('세단', 'SUV') AND
+        h.CAR_ID IS NULL
+)
+SELECT
+    a.CAR_ID,
+    a.CAR_TYPE,
+    FLOOR(a.DAILY_FEE * 30 * (1 - a.DISCOUNT_RATE / 100)) AS FEE
+FROM
+    AvailableCars a
+WHERE
+    FLOOR(a.DAILY_FEE * 30 * (1 - a.DISCOUNT_RATE / 100)) BETWEEN 500000 AND 2000000
+ORDER BY
+    FEE DESC,
+    CAR_TYPE ASC,
+    CAR_ID DESC;
+
